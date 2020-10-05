@@ -1,8 +1,10 @@
-name: benchmark
+name: Benchmark
+
 on:
   push:
-    branches:
-      - canary
+    branches: [ jn.benchmark ]
+  pull_request:
+    branches: [ jn.benchmark ]
 
 jobs:
   benchmark:

@@ -1,112 +1,76 @@
-const TOKEN_STRING = 1;
-const TOKEN_QUOTED_STRING = 2;
-const TOKEN_FUNCTION = 3;
-const TOKEN_BRACKET = 4;
+const TOKEN_COMMENT = 0;
+const TOKEN_SPACE = 1;
+const TOKEN_STRING = 2;
+const TOKEN_HASH = 3;
+const TOKEN_AT = 4;
+const TOKEN_NUMERIC = 5;
+const TOKEN_IDENT = 6;
+const TOKEN_DELIM = 7;
+const TOKEN_FUNCTION = 8;
+const TOKEN_VAR = 9;
 
-type TokenType = typeof TOKEN_STRING | typeof TOKEN_QUOTED_STRING | typeof TOKEN_FUNCTION | typeof TOKEN_BRACKET | 0;
+type TokenType =
+  | typeof TOKEN_COMMENT
+  | typeof TOKEN_SPACE
+  | typeof TOKEN_STRING
+  | typeof TOKEN_HASH
+  | typeof TOKEN_AT
+  | typeof TOKEN_NUMERIC
+  | typeof TOKEN_AT
+  | typeof TOKEN_IDENT
+  | typeof TOKEN_DELIM
+  | typeof TOKEN_FUNCTION
+  | typeof TOKEN_VAR;
 
-let currentType: TokenType;
-let currentToken = '';
-let currentDepth = 0;
-let tokenGroups: string[][] = [[]];
+type Token = [TokenType, string, string, string, number, number];
 
-export const tokenizeValue = (str: string) => {
-  resetCurrentToken();
-  tokenGroups = [[]];
-  if (!str) {
-    return tokenGroups;
+const matchIdentifierSource = /(?:(?:[A-Za-z]|[^\x00-\x7F]|_|\d|-)|\\(?:[0-9A-Fa-f]{1,5}[ \t\n\f\r]?|[^\n\f\r]))+/
+  .source;
+const matchTokenOfComment = /(\/\*)((?:[^*]+|\*[^/])+)((?:\*\/)?)/g;
+const matchTokenOfSpace = /()([ \n\f\r]+)()/g;
+const matchTokenOfString = /(["'])((?:\\\r\n|\\[^]|(?!\1)[^\\\n\f\r])*)(\1?)/g;
+const matchTokenOfHashOrVar = RegExp('([#$])(' + matchIdentifierSource + ')()', 'g');
+const matchTokenOfAtIdent = RegExp('(@)(' + matchIdentifierSource + ')()', 'g');
+const matchTokenofNumeric = RegExp(
+  '()([+-]?\\d*(?:\\.\\d+)?(?:[Ee][+-]?\\d+)?)((?:' + matchIdentifierSource + '|%)?)',
+  'g'
+);
+const matchTokenOfIdentOrFunction = RegExp('()(' + matchIdentifierSource + ')(\\(?)', 'g');
+const matchTokenOfDelim = /()([^])()/g;
+
+const matchTokensOfAny = /(\/\*)|([ \n\f\r])|(["'])|([#$](?:[A-Za-z]|[^\x00-\x7F]|_|\d|-))|(@(?:-(?:(?:[A-Za-z]|[^\x00-\x7F]|_)|-|(?:\\[^\n\f\r]))|(?:[A-Za-z]|[^\x00-\x7F]|_)|(?:\\[^\n\f\r])))|([+-](?:\d|\.\d)|\.\d|\d)|((?:-(?:(?:[A-Za-z]|[^\x00-\x7F]|_)|-|(?:\\[^\n\f\r]))|(?:[A-Za-z]|[^\x00-\x7F]|_)|(?:\\[^\n\f\r])))|([^])/g;
+const matchTokenOfType = [
+  matchTokenOfComment,
+  matchTokenOfSpace,
+  matchTokenOfString,
+  matchTokenOfHashOrVar,
+  matchTokenOfAtIdent,
+  matchTokenofNumeric,
+  matchTokenOfIdentOrFunction,
+  matchTokenOfDelim,
+] as RegExp[];
+
+const tokenizeValue = (str: string) => {
+  let anyResult = null;
+  let currentPosition = 0;
+
+  const tokens: Token[] = [];
+
+  while ((anyResult = matchTokensOfAny.exec(str))) {
+    const initialTokenType = anyResult.indexOf(anyResult[0], 1) - 1;
+    const matchToken = matchTokenOfType[initialTokenType];
+    matchToken.lastIndex = currentPosition;
+    const [{ length }, opening, content, closing = ''] = matchToken.exec(str) as RegExpExecArray;
+    const openingPosition = currentPosition;
+    const closingPosition = currentPosition + length;
+    const tokenType = (initialTokenType === 3 && opening === '$'
+      ? 9
+      : initialTokenType === 6 && closing === '('
+      ? 9
+      : initialTokenType) as TokenType;
+    tokens.push([tokenType, opening, content, closing, openingPosition, closingPosition]);
+    matchTokensOfAny.lastIndex = currentPosition = closingPosition;
   }
-  const strLength = str.length;
-  for (let i = 0; i < strLength; i++) {
-    const char = str[i];
-    switch (char) {
-      // whitespace
-      case ' ':
-        if (currentType === TOKEN_STRING) {
-          addCurrentTokenToGroup();
-        } else if (currentType) {
-          currentToken += char;
-        }
-        break;
-      // new token group
-      case ',':
-        if (!currentDepth) {
-          addCurrentTokenToGroup();
-          addNewTokenGroup();
-        } else {
-          currentToken += char;
-        }
-        break;
 
-      // Quoted string:
-      case '"':
-        currentToken += char;
-        if (!currentDepth && !currentType) {
-          currentType = TOKEN_QUOTED_STRING;
-          currentDepth = 1;
-        } else if (currentDepth === 1 && currentType === TOKEN_QUOTED_STRING) {
-          currentDepth = 0;
-          addCurrentTokenToGroup();
-        }
-        break;
-
-      // Css function:
-      case '(':
-        if (!currentDepth) currentType = TOKEN_FUNCTION;
-        currentDepth++;
-        currentToken += char;
-        break;
-
-      case ')':
-        currentToken += char;
-        currentDepth--;
-        if (currentType === TOKEN_FUNCTION && !currentDepth) addCurrentTokenToGroup();
-        break;
-
-      // Bracket values:
-      case '[':
-        if (!currentDepth) currentType = TOKEN_BRACKET;
-        currentToken += char;
-        currentDepth++;
-        break;
-      case ']':
-        currentToken += char;
-        currentDepth--;
-        if (!currentDepth) addCurrentTokenToGroup();
-        break;
-
-      default:
-        if (!currentType) currentType = TOKEN_STRING;
-        currentToken += char;
-    }
-  }
-  if (currentToken) addCurrentTokenToGroup();
-  return tokenGroups;
+  return tokens;
 };
-/**
- * UTILS:
- */
-
-/**
- * Resets the current token info
- */
-function resetCurrentToken() {
-  currentDepth = currentType = 0;
-  currentToken = '';
-}
-/**
- * Adds current token to the stack then starts a new one
- */
-function addCurrentTokenToGroup() {
-  if (currentType) tokenGroups[tokenGroups.length - 1].push(currentToken);
-  resetCurrentToken();
-}
-/**
- * Adds a new token group and requests a new one
- * For things like animations or box shadow where there might be multiple rules
- * applied to the same value
- */
-function addNewTokenGroup() {
-  tokenGroups[tokenGroups.length] = [];
-  resetCurrentToken();
-}

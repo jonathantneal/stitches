@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1601987614657,
+  "lastUpdate": 1601999763012,
   "repoUrl": "https://github.com/jonathantneal/stitches",
   "entries": {
     "Benchmark.js Benchmark": [
@@ -170,6 +170,40 @@ window.BENCHMARK_DATA = {
             "range": "±2.02%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "jonathantneal",
+            "username": "jonathantneal"
+          },
+          "committer": {
+            "name": "jonathantneal",
+            "username": "jonathantneal"
+          },
+          "id": "81afa3a88cc196931a3da19d840a85f30a9401f0",
+          "message": "Add benchmarks",
+          "timestamp": "2020-10-05T23:09:52Z",
+          "url": "https://github.com/jonathantneal/stitches/pull/2/commits/81afa3a88cc196931a3da19d840a85f30a9401f0"
+        },
+        "date": 1601999762614,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "createCss: compose atoms",
+            "value": 22913,
+            "range": "±3.55%",
+            "unit": "ops/sec",
+            "extra": "76 samples"
+          },
+          {
+            "name": "createCss: create tokens",
+            "value": 28730,
+            "range": "±4.77%",
+            "unit": "ops/sec",
+            "extra": "78 samples"
           }
         ]
       }

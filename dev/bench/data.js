@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1601959262350,
+  "lastUpdate": 1601987614657,
   "repoUrl": "https://github.com/jonathantneal/stitches",
   "entries": {
     "Benchmark.js Benchmark": [
@@ -136,6 +136,40 @@ window.BENCHMARK_DATA = {
             "range": "±1.36%",
             "unit": "ops/sec",
             "extra": "88 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "jonathantneal",
+            "username": "jonathantneal"
+          },
+          "committer": {
+            "name": "jonathantneal",
+            "username": "jonathantneal"
+          },
+          "id": "477ea120691c084ccf40854f183340f90c4619b1",
+          "message": "Add benchmarks",
+          "timestamp": "2020-10-05T23:09:52Z",
+          "url": "https://github.com/jonathantneal/stitches/pull/2/commits/477ea120691c084ccf40854f183340f90c4619b1"
+        },
+        "date": 1601987614264,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "Tokenizing: Undefined",
+            "value": 19096836,
+            "range": "±0.41%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "Tokenizing: Two Ident Tokens",
+            "value": 2408801,
+            "range": "±2.02%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }

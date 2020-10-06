@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "target": "es5",
     "module": "commonjs",
     "lib": ["dom", "es2017"],
@@ -11,7 +12,12 @@
     "sourceMap": true,
     "inlineSources": true,
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+    "types": [
+      "benchmark",
+      "node",
+      "jest"
+    ]
   },
   "exclude": ["node_modules", "dist", "es", "lib", "coverage"]
 }

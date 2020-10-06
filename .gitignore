@@ -53,6 +53,9 @@ typings/
 # Optional npm cache directory
 .npm
 
+# Package lock file
+package-lock.json
+
 # Optional eslint cache
 .eslintcache
 
@@ -105,3 +108,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Benchmark data
+benchmark.txt

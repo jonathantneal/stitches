@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1601999763012,
+  "lastUpdate": 1602003294537,
   "repoUrl": "https://github.com/jonathantneal/stitches",
   "entries": {
     "Benchmark.js Benchmark": [
@@ -204,6 +204,75 @@ window.BENCHMARK_DATA = {
             "range": "±4.77%",
             "unit": "ops/sec",
             "extra": "78 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "jonathantneal",
+            "username": "jonathantneal"
+          },
+          "committer": {
+            "name": "jonathantneal",
+            "username": "jonathantneal"
+          },
+          "id": "9af460efb21eddf98224ba780c04bd5ce11f7d7c",
+          "message": "Add benchmarks",
+          "timestamp": "2020-10-05T23:09:52Z",
+          "url": "https://github.com/jonathantneal/stitches/pull/2/commits/9af460efb21eddf98224ba780c04bd5ce11f7d7c"
+        },
+        "date": 1602003294124,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "createCss: create simple atoms",
+            "value": 46239,
+            "range": "±5.03%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "createCss: compose atoms",
+            "value": 30303,
+            "range": "±3.47%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "createCss: create tokens",
+            "value": 42559,
+            "range": "±4.20%",
+            "unit": "ops/sec",
+            "extra": "80 samples"
+          },
+          {
+            "name": "createCss: remove special characters from tokens",
+            "value": 38105,
+            "range": "±3.60%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "createCss: remove special characters from tokens in themes",
+            "value": 29618,
+            "range": "±4.10%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "createCss: generate negative tokens for numeric scales",
+            "value": 13399,
+            "range": "±3.36%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "createCss: do not generate negative tokens when the user already defined a negative one",
+            "value": 76952,
+            "range": "±6.29%",
+            "unit": "ops/sec",
+            "extra": "73 samples"
           }
         ]
       }

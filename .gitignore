@@ -1,4 +1,7 @@
 core
-react
 node_modules
+react
+
+benchmark.txt
+package-lock.json
 yarn.lock

@@ -2,6 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "benchmark": "babel-node --extensions \".ts\" benchmark.ts",
     "release": "yarn build && yarn test && lerna publish",
     "release:canary": "yarn build && yarn test && lerna publish --dist-tag canary",
     "build": "preconstruct build",

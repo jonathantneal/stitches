@@ -129,12 +129,19 @@ export const tokenTypes = [
 ] as const;
 
 const enhanceSheet = (sheet: ISheet): ISheet => {
+  const { content, cssRules, ownerNode } = sheet;
   return {
-    content: sheet.content,
-    cssRules: sheet.cssRules,
+    content,
+    cssRules,
+    ownerNode,
     insertRule: (rule, index) => {
       try {
-        sheet.insertRule(rule, index);
+        const childNode = typeof index === 'number' && ownerNode.childNodes[index];
+        if (childNode) {
+          childNode.before(rule);
+        } else {
+          ownerNode.append(rule);
+        }
         return index;
       } catch {
         return -1;
@@ -180,11 +187,33 @@ export const createSheets = (env: any, screens: IBreakpoints = {}) => {
     sheets: ['__variables__', '__keyframes__', MAIN_BREAKPOINT_ID]
       .concat(Object.keys(screens))
       .reduce<{ [key: string]: ISheet }>((aggr, key) => {
+        const cssRules: string[] = [];
         aggr[key] = enhanceSheet({
           content: '',
-          cssRules: [],
+          cssRules,
+          ownerNode: ({
+            get childNodes() {
+              return cssRules.map(
+                (cssRule, index) =>
+                  ({
+                    before(content: string) {
+                      cssRules.splice(index, 0, content);
+                    },
+                  } as Text)
+              );
+            },
+            prepend(...content: string[]) {
+              cssRules.unshift(...content);
+            },
+            append(...content: string[]) {
+              cssRules.push(...content);
+            },
+            get textContent() {
+              return cssRules.join('');
+            },
+          } as unknown) as HTMLStyleElement,
           insertRule(content, index = 0) {
-            this.cssRules.splice(index, 0, content);
+            cssRules.splice(index, 0, content);
           },
         });
 

@@ -24,7 +24,9 @@ function createFakeEnv(styleTagContents: string[] = [], computedStyles: string[]
       return computedStyles;
     },
     document: {
-      styleSheets,
+      get styleSheets() {
+        return styleSheets.map((styleSheet) => (styleSheet?.ownerNode as HTMLStyleElement)?.sheet as CSSStyleSheet);
+      },
       // Creates a style tag
       createElement() {
         return createStyleTag('');
@@ -159,8 +161,8 @@ describe('createCss: mixed(SSR & Client)', () => {
     expect(styles.length).toBe(3);
     expect(styles[0]).toMatchInlineSnapshot(`
       "/* STITCHES:__variables__ */
-      .theme-0{--colors-red:red;}
-      :root{--colors-red:tomato;}"
+      :root{--colors-red:tomato;}
+      .theme-0{--colors-red:red;}"
     `);
     expect(styles[2]).toMatchInlineSnapshot(`
       "/* STITCHES */
@@ -755,8 +757,8 @@ describe('createCss: mixed(SSR & Client)', () => {
     expect(styles.length).toBe(3);
     expect(styles[0]).toMatchInlineSnapshot(`
       "/* STITCHES:__variables__ */
-      .theme-0{--colors-primary:blue;}
-      :root{--colors-primary:tomato;}"
+      :root{--colors-primary:tomato;}
+      .theme-0{--colors-primary:blue;}"
     `);
     expect(styles[2]).toMatchInlineSnapshot(`
       "/* STITCHES */

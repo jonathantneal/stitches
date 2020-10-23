@@ -425,4 +425,5 @@ export interface ISheet {
   cssRules: any[];
   content: string;
   insertRule(rule: string, index?: number): void;
+  ownerNode: HTMLStyleElement;
 }
